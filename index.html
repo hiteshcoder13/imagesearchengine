@@ -4,141 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        *{
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            box-sizing: border-box;
+        }
 
-body{color: antiquewhite
-    background-color:black ;
-}
+        body {
+            color: antiquewhite;
+            background-color: black;
+        }
 
-h1{
-    text-align: center;
-    margin: 100px auto 50px;
-    font-weight: 600;
-}
+        h1 {
+            text-align: center;
+            margin: 100px auto 50px;
+            font-weight: 600;
+        }
 
-form{
-    width: 50%;
-    max-width: 400;
-    margin: auto;
-    height: 80px;
-    background: #434989;
-    display: flex;
-    align-items: center;
-}
+        form {
+            width: 50%;
+            max-width: 400px;
+            margin: auto;
+            height: 80px;
+            background: #434989;
+            display: flex;
+            align-items: center;
+        }
 
-form input{
-    flex: 1;
-    height: 100%;
-    border: 0;
-    outline: 0;
-    background: transparent;
-    font-size: 18px;
-    padding: 0px 30px;
-    color: #fff;
-}
+        form input {
+            flex: 1;
+            height: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            font-size: 18px;
+            padding: 0px 30px;
+            color: #fff;
+        }
 
-form button{
-    height: 100%;
-    padding: 0 40px;
-        background: #ff3929;
-    color: #fff;
-    font-size: 18px;
-    border: 0;
-    outline: 0;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    cursor: pointer;
-}
+        form button {
+            height: 100%;
+            padding: 0 40px;
+            background: #ff3929;
+            color: #fff;
+            font-size: 18px;
+            border: 0;
+            outline: 0;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            cursor: pointer;
+        }
 
-::placeholder{
-    color: antiquewhite;
-    font-size: 18px;
-}
+        ::placeholder {
+            color: antiquewhite;
+            font-size: 18px;
+        }
 
-#showmorebtn{
-    border: 0;
-    outline: 0;
-    color: #fff;
-    background: #ff3929;
-    padding: 10px 20px;
-    border-radius: 4px;
-    margin: 10px auto 100px;
-    cursor: pointer;
-    display: none;
+        #showmorebtn {
+            border: 0;
+            outline: 0;
+            color: #fff;
+            background: #ff3929;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 10px auto 100px;
+            cursor: pointer;
+            display: none;
+        }
 
-}
+        #search-result {
+            width: 80%;
+            margin: 100px auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 40px;
+        }
 
-#search-result{
-    width: 80%;
-    margin: 100 auto 50px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 40px;
-}
-
-#search-result img{
-    width: 100%;
-    object-fit: cover;
-    border-radius: 5px;
-    height: 230px;
-}
+        #search-result img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+            height: 230px;
+        }
     </style>
-    <title> IMAGE SEARCH ENGINE </title>
+    <title>IMAGE SEARCH ENGINE</title>
 </head>
 <body>
-    <h1> image search engine </h1>
+    <h1>image search engine</h1>
 
     <form id="search-form">
-        <input type="text" id="search-box" placeholder=" Search anything here....">
-        <button> Search </button>
+        <input type="text" id="search-box" placeholder="Search anything here...">
+        <button>Search</button>
     </form>
 
     <div id="search-result"></div>
-    <button id="showmorebtn"> show more </button>
+    <button id="showmorebtn">show more</button>
 
     <script>
+        const searchform = document.getElementById("search-form");
+        const searchbox = document.getElementById("search-box");
+        const searchresult = document.getElementById("search-result");
+        const showmorebtn = document.getElementById("showmorebtn");
+        const accesskey = "n0hlK1BNdUx5_rK-cy9F9LktLS5b9QFshGqIrGhRySQ";
+        let keyword = "";
+        let page = 1;
 
-        
-const searchform = document.getElementById("search-form");
-const searchbox = document.getElementById("search-box");
-const searchresult = document.getElementById("search-result");
-const showmorebtn = document.getElementById("showmorebtn");
-const accesskey = "n0hlK1BNdUx5_rK-cy9F9LktLS5b9QFshGqIrGhRySQ" ;
-let keyword = "" ;
-let page = "1" ;
+        async function searchimages() {
+            keyword = searchbox.value;
+            const url = `https://api.unsplash.com/search/photos?page=${page}&query=${keyword}&client_id=${accesskey}&per_page=12`;
 
-async function searchimages(){
-    keyword = searchbox.value
-    const url = `https://api.unsplash.com/search/photos?page=${page}&query=${keyword}&client_id=${accesskey}&per_page=12`;
+            const response = await fetch(url);
+            const data = await response.json();
 
-    const response = await fetch(url);
-    const data = await response.json() ;
+            const results = data.results;
 
-    const results = data.results;
-    results.map((result) =>
-    {
+            if (page === 1) {
+                searchresult.innerHTML = "";
+            }
 
-        const image = document.createElement("img");
-        image.src = result.urls.small;
-        const imagelink = document.createElement("a");
-        imagelink.href = result.links.html;
-        imagelink.target = "_blank" ;
-        imagelink.appendChild(image);
-        searchresult.appendChild(imagelink);
-    })
-}
+            results.map((result) => {
+                const image = document.createElement("img");
+                image.src = result.urls.small;
+                const imagelink = document.createElement("a");
+                imagelink.href = result.links.html;
+                imagelink.target = "_blank";
+                imagelink.appendChild(image);
+                searchresult.appendChild(imagelink);
+            });
 
-searchform.addEventListener("submit" , (e) => {
-    e.preventDefault();
-    page = 1;
-    searchimages();
-})
+            if (results.length > 0) {
+                showmorebtn.style.display = "block";
+            } else {
+                showmorebtn.style.display = "none";
+            }
+        }
 
+        searchform.addEventListener("submit", (e) => {
+            e.preventDefault();
+            page = 1;
+            searchimages();
+        });
+
+        showmorebtn.addEventListener("click", () => {
+            page++;
+            searchimages();
+        });
     </script>
 </body>
 </html>
